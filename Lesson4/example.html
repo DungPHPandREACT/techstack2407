@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid black;
+        padding: 0px 16px;
+      }
+
+      .col-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .col-left h2 {
+        margin-left: 12px;
+      }
+
+      .col-left p {
+        border: 1px solid black;
+        padding: 8px 12px;
+      }
+
+      .pages {
+        display: flex;
+        /* width: 300px; */
+      }
+
+      .page {
+        padding: 12px;
+      }
+
+      .page.active {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navigation">
+      <div class="col-left">
+        <p>Logo</p>
+        <h2>Brand name</h2>
+      </div>
+      <div class="pages">
+        <div class="page">Home</div>
+        <div class="page">About</div>
+        <div class="page">Contact</div>
+        <div class="page active">Login</div>
+      </div>
+    </div>
+  </body>
+</html>

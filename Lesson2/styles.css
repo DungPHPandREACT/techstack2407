@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+* {
+    font-family: "Inter", sans-serif;
+}
+
+h1{
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(182, 57, 57, 0.3);
+    text-align: start;
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDsou-9Yj0s2NTQ1pGx4zvMQj12BW1NUvgLA&s');
+}
+
+a{
+    text-align: center;
+}
