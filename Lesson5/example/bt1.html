@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Bài tập 1</title>
+		<style>
+			/* reset css */
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+
+			.navigation {
+				background: #333333;
+				display: flex;
+				justify-content: space-between;
+				padding: 12px 24px;
+				align-items: center;
+			}
+
+			.navigation-pages {
+				display: flex;
+			}
+
+			h2.navigation-logo {
+				margin: 0;
+			}
+
+			.navigation-page {
+				color: white;
+				padding: 8px 16px;
+			}
+
+			h2.navigation-logo {
+				color: white;
+			}
+
+			.content {
+				padding: 24px 12px;
+			}
+
+			@media (max-width: 576px) {
+				.navigation-pages {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-page">
+			<div class="navigation">
+				<h2 class="navigation-logo">Logo</h2>
+				<div class="navigation-pages">
+					<div class="navigation-page">Home</div>
+					<div class="navigation-page">About</div>
+					<div class="navigation-page">Services</div>
+					<div class="navigation-page">Contact</div>
+				</div>
+			</div>
+
+			<div class="content">
+				Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt amet
+				accusamus dignissimos ratione obcaecati repudiandae quia inventore odit
+				corrupti. Consequatur iure eos laboriosam, quis error autem eius
+				excepturi ullam reiciendis.
+			</div>
+		</div>
+	</body>
+</html>
