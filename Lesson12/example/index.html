@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<ul id="favorite-list">
+			<li class="favorite-list-item">Đọc sách</li>
+			<li class="favorite-list-item">Xem youtube</li>
+			<li class="favorite-list-item">Lướt facebook</li>
+			<li class="favorite-list-item">Học code</li>
+		</ul>
+
+		<script>
+			// const $tagsLi = document.querySelectorAll('li.favorite-list-item');
+			// for (let $tagLi of $tagsLi) {
+			// 	$tagLi.innerText = 'I love this thing';
+			// 	$tagLi.style.color = 'red';
+			// }
+
+			// const content = prompt('Nhập nội dung');
+			// const $tagLi = document.createElement('li');
+			// $tagLi.innerText = content;
+			// document.getElementById('favorite-list').appendChild($tagLi);
+
+			document.getElementById('favorite-list').innerHTML =
+				document.getElementById('favorite-list').innerHTML +
+				`<li class="favorite-list-item">Test</li>`;
+		</script>
+	</body>
+</html>
