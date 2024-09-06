@@ -53,7 +53,7 @@ function renderListProduct() {
 
 	for (let product of listProduct) {
 		htmlProducts += `
-                <div class="col-3 mt-3">
+                <div class="col-3 mt-3" style="padding: 0px 12px">
 					<div class="card" style="width: 18rem">
 						<img
 							src="${product.image}"
