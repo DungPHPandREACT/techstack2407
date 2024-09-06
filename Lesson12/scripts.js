@@ -107,9 +107,10 @@ document.getElementById('btn').addEventListener('click', click1);
 document.getElementById('btn').addEventListener('click', click2);
 
 // Xử lý click vào button => lấy content trong input
+
 document.getElementById('btn-get-content').onclick = function () {
+    const $input = document.getElementById('content').value;
 	console.log('clicked');
-	const $input = document.getElementById('content').value;
 	console.log($input);
 };
 

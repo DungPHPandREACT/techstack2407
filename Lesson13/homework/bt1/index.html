@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<div style="display: flex; align-items: center">
+			<div class="col-left">
+				<div>
+					<label style="display: block" for="url">URL</label>
+					<input type="text" id="url" placeholder="Nhập URL ảnh" />
+				</div>
+				<div>
+					<label style="display: block" for="width">Chiều rộng (px)</label>
+					<input type="number" id="width" placeholder="Nhập chiều rộng ảnh" />
+				</div>
+				<div>
+					<label style="display: block" for="height">Chiều cao (px)</label>
+					<input type="number" id="height" placeholder="Nhập chiều cao ảnh" />
+				</div>
+				<div>
+					<label style="display: block" for="radius">Bo góc (px)</label>
+					<input type="number" id="radius" placeholder="Nhập bo góc ảnh" />
+				</div>
+				<div>
+					<label style="display: block" for="alt">Alt</label>
+					<input type="text" id="alt" placeholder="Nhập mô tả ảnh" />
+				</div>
+			</div>
+			<div class="col-right">
+				<img
+					id="img"
+					src="https://cotcoinox.net/contents_tinta/images/mua-ban-la-co-to-quoc-viet-nam-gia-re-tai-tp-hcm.png"
+					style="width: 100px; height: 100px; margin-left: 30px"
+				/>
+			</div>
+		</div>
+
+		<script src="./scripts.js"></script>
+	</body>
+</html>

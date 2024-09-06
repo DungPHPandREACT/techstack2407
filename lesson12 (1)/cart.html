@@ -1,0 +1,91 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB_</title>
+    <link rel="stylesheet" href="styless.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="img">
+                    <img src="https://cdn.home.vn/655360_70849781107453_2374592928677888?wt=1194ac3755c3cf1b21fd6e11f6930755&rt=a68d879b27fcd10e96e07bccc0729689"
+                        alt="Logo" width="40px" height="40px">
+                </div>
+                <span>My shop</span>
+            </div>
+            <ul id="nav">
+                <li><a href="main.html">Home</a></li>
+                <li><a href="">About us</a></li>
+                <li><a href="">Contact</a></li>
+                <li style="background-color: rgb(174, 197, 244);">
+                    <a class="cart" href="cart.html">My Cart (0)</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <main>
+        <section class="information">
+            <h2>Your information</h2>
+            <form>
+                <div class="test1">
+                    <div class="form-group">
+                        <label for="name">Full name *</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone number *</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address *</label>
+                        <input type="text" id="address" required>
+                    </div>
+                </div>
+                <div class="test2">
+                    <div class="form-group">
+                        <label>Payment method *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="payment" required> Credit cart</label>
+                            <label><input type="radio" name="payment"> Your bank</label>
+                            <label><input type="radio" name="payment"> Momo</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section class="categories">
+            <h2>Cart</h2>
+            <div id="cart-items">
+                
+            </div>
+            <button class="submit-order">Submit Order</button>
+        </section>
+    </main>
+    <footer>
+        <div id="footer-content">
+            <span class="name">
+                <b>My Shop</b>
+            </span>
+            <div class="test">
+                <span id="position">
+                    <i class="fa-solid fa-location-dot"></i>
+                    22C Somewhere, Ha Noi
+                </span>
+                <span id="phone">
+                    <i class="fa-solid fa-tty"></i>
+                    09876543210
+                </span>
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="product-script.js"></script>
+
+</body>
