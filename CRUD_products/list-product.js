@@ -1,13 +1,5 @@
-const listProduct = [
-	{
-		id: 1,
-		title: 'Máy ảnh',
-		price: 50000,
-		image:
-			'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7o5WXUPcIQhTdmixyaEZuGEwT2MjI-PG3pA&s',
-		description: 'Máy ảnh cao cấp',
-	},
-];
+const listProduct = JSON.parse(localStorage.getItem('listProduct')) || [];
+console.log(listProduct);
 // Các input
 const $idProduct = document.getElementById('id');
 const $titleProduct = document.getElementById('title');
@@ -17,7 +9,6 @@ const $descriptionProduct = document.getElementById('description');
 // Các button
 const $btnCreateProduct = document.getElementById('create-product');
 
-console.log(listProduct);
 // Bước 1: gán event cho button thêm mới
 $btnCreateProduct.addEventListener('click', function () {
 	// Trong hàm
@@ -45,7 +36,9 @@ $btnCreateProduct.addEventListener('click', function () {
 	$priceProduct.value = '';
 	$imageProduct.value = '';
 	$descriptionProduct.value = '';
-	// Bước 7: gọi lại hàm renderListProduct để in thông tin danh sách sản phẩm mới nhất
+	// Bước 7: lưu thông tin danh sách sản phẩm mới nhất vào trong local storage
+	localStorage.setItem('listProduct', JSON.stringify(listProduct));
+	// Bước 8: gọi lại hàm renderListProduct để in thông tin danh sách sản phẩm mới nhất
 	renderListProduct();
 	console.log(listProduct);
 });
