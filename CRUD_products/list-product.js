@@ -1,4 +1,13 @@
-const listProduct = [];
+const listProduct = [
+	{
+		id: 1,
+		title: 'Máy ảnh',
+		price: 50000,
+		image:
+			'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7o5WXUPcIQhTdmixyaEZuGEwT2MjI-PG3pA&s',
+		description: 'Máy ảnh cao cấp',
+	},
+];
 // Các input
 const $idProduct = document.getElementById('id');
 const $titleProduct = document.getElementById('title');
@@ -22,9 +31,9 @@ $btnCreateProduct.addEventListener('click', function () {
 	// Tự làm
 	// Bước 4: tạo 1 object mới (tương đương với tạo 1 sản phẩm mới) chứa các thông tin người dùng vừa nhập
 	const newProduct = {
-		id: id,
+		id: Number(id),
 		title: title,
-		price: price,
+		price: Number(price),
 		image: image,
 		description: description,
 	};
@@ -36,5 +45,36 @@ $btnCreateProduct.addEventListener('click', function () {
 	$priceProduct.value = '';
 	$imageProduct.value = '';
 	$descriptionProduct.value = '';
+	// Bước 7: gọi lại hàm renderListProduct để in thông tin danh sách sản phẩm mới nhất
+	renderListProduct();
 	console.log(listProduct);
 });
+
+function renderListProduct() {
+	let htmlProducts = '';
+
+	for (let product of listProduct) {
+		htmlProducts += `
+                <div class="col-3 mt-3">
+					<div class="card" style="width: 18rem">
+						<img
+							src="${product.image}"
+							class="card-img-top"
+							alt="${product.title}"
+                            style="width: 280px; height: 280px; object-fit: contain;"
+						/>
+						<div class="card-body">
+							<h5 class="card-title">${product.title}</h5>
+							<p class="card-text mt-1 mb-1">${product.price} VND</p>
+							<p class="card-text">${product.description}</p>
+							<button class="btn btn-primary">Xem chi tiết</button>
+						</div>
+					</div>
+				</div>
+            `;
+	}
+
+	document.getElementById('container-products').innerHTML = htmlProducts;
+}
+
+renderListProduct();
