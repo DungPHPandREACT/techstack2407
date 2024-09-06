@@ -1,3 +1,8 @@
+// -Json không phải kiểu dữ liệu, nó chỉ là định dạng dữ liệu
+// -Json là kiểu dữ liệu string
+// JSON.stringify(data) => chuyển đổi data sang định dạng json (kiểu dữ liệu string)
+// JSON.parse(data) => chuyển đổi data từ định dạng json về kiểu dữ liệu ban đầu
+
 const listProduct = JSON.parse(localStorage.getItem('listProduct')) || [];
 console.log(listProduct);
 // Các input
