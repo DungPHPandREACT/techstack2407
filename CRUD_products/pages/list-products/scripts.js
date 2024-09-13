@@ -11,9 +11,11 @@ const $titleProduct = document.getElementById('title');
 const $priceProduct = document.getElementById('price');
 const $imageProduct = document.getElementById('image');
 const $descriptionProduct = document.getElementById('description');
+const $keyword = document.getElementById('keyword');
 // Các button
 const $btnCreateProduct = document.getElementById('create-product');
 const $btnUpdateProduct = document.getElementById('update-product');
+const $btnSearch = document.getElementById('search');
 // Modal bootstrap
 const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
 	keyboard: false,
@@ -58,10 +60,15 @@ $btnCreateProduct.addEventListener('click', function () {
 	console.log(listProduct);
 });
 
-function renderListProduct() {
+function renderListProduct(dataProduct) {
+	// Nếu không truyền giá trị vào hàm thì dataProduct sẽ là undefined
+	if (dataProduct === undefined) {
+		dataProduct = listProduct;
+	}
+
 	let htmlProducts = '';
 
-	for (let product of listProduct) {
+	for (let product of dataProduct) {
 		htmlProducts += `
                 <div class="col-3 mt-3" style="padding: 0px 12px">
 					<div class="card" style="width: 18rem">
@@ -238,3 +245,24 @@ document
 	.addEventListener('hide.bs.modal', function (event) {
 		resetModal();
 	});
+
+// Cách 1: gán event cho sự kiện onclick của button Tìm kiếm => Thì khi click vào button mới trả về dữ liệu
+// Bước 1: Gán sự kiện onclick cho button "Tìm kiếm"
+function searchProduct() {
+	// Bước 2: Khi function được gọi => lấy keyword người dùng vừa nhập ở input search
+	const keyword = $keyword.value;
+	// Bước 3: Lọc ra các dữ liệu thỏa mãn điều kiện
+	const dataFilter = [];
+	for (let product of listProduct) {
+		if (product.title.toLowerCase().includes(keyword.toLowerCase()) === true) {
+			dataFilter.push(product);
+		}
+	}
+	console.log(dataFilter);
+	// Bước 4: Gọi lại hàm renderListProduct và truyền dữ liệu vừa lọc được vào trong hàm
+	renderListProduct(dataFilter);
+}
+$btnSearch.onclick = searchProduct;
+
+// Cách 2: gán event cho sự kiện onchange hoặc oninput của input search => thì khi giá trị input thay đổi => trả về dữ liệu
+$keyword.oninput = searchProduct;
