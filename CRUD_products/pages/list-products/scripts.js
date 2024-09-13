@@ -4,7 +4,6 @@
 // JSON.parse(data) => chuyển đổi data từ định dạng json về kiểu dữ liệu ban đầu
 
 const listProduct = JSON.parse(localStorage.getItem('listProduct')) || [];
-console.log(listProduct);
 // Các input
 const $idProduct = document.getElementById('id');
 const $titleProduct = document.getElementById('title');
@@ -65,7 +64,10 @@ function renderListProduct() {
 							<h5 class="card-title">${product.title}</h5>
 							<p class="card-text mt-1 mb-1">${product.price} VND</p>
 							<p class="card-text">${product.description}</p>
-							<button class="btn btn-primary">Xem chi tiết</button>
+							<div>
+								<button class="btn btn-primary">Xem chi tiết</button>
+								<button type="button" class="btn btn-secondary" style="margin-left: 8px"><i class="fa-solid fa-cart-plus"></i></button>
+							</div>
 						</div>
 					</div>
 				</div>
