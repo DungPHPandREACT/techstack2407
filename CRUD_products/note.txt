@@ -1,0 +1,57 @@
+- Quản lý danh sách sản phẩm
+CRUD
++ C: create => thêm mới sản phẩm
+	=> Sản phẩm => kiểu dữ liệu sẽ là object
+	const product = {
+		id: //mã của sản phẩm
+		title: //tên sản phẩm
+		price: //giá sản phẩm
+		description: //thông tin sản phẩm
+		image: //ảnh sản phẩm
+	}
+	=> Danh sách sản phẩm => array object => [product1, product2, ...]
++ R: read => in ra danh sách sản phẩm dựa trên dữ liệu đang có
+
++ U: update => cập nhật thông tin sản phẩm
+	-Giai đoạn 1: Là khi bấm vào button cập nhật => in thông tin của sản phẩm lên các input
+	Bước 1: Gán function cho button Cập nhật
+	Bước 2: Khi function được gọi => 
+	xử lý để lấy được thông tin sản phẩm mà người dùng click
+	Bước 3: Đổ dữ liệu lên các input tương ứng
+	-Giai đoạn 2: 
+	Bước 1: Gán function cho button Cập nhật trong modal
+	Bước 2: Lấy các thông tin mà người dùng vừa chỉnh sửa
+	Bước 3: Tìm vị trí của sản phẩm trong danh sách (tìm index product trong listProduct)
+	Bước 4: Sửa thông tin sản phẩm
+	Bước 5: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
+	Bước 6: Gọi lại hàm renderListProduct để in ra thông tin sản phẩm mới nhất
+	Bước 7: Khôi phục lại trạng thái ban đầu của giao diện
+		+ Ẩn button Cập nhật
+		+ Show button Thêm mới
+		+ Reset input
+
++ D: delete => xóa sản phẩm đang có
+Bước 1: Gán function cho button Xóa
+Bước 2: Khi function được gọi => 
+xử lý để lấy được vị trí sản phẩm trong danh sách sản phẩm (index product trong listProduct)
+Bước 3: Xóa sản phẩm khỏi danh sách (xóa phần tử khỏi mảng)
+Bước 4: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
+Bước 5: Gọi lại hàm render để in ra dữ liệu mới nhất
+
++ S: search => tìm kiếm sản phẩm theo trường thông tin nhất định
+Bước 1: Gán sự kiện onclick cho button "Tìm kiếm"
+Bước 2: Khi function được gọi => lấy keyword người dùng vừa nhập ở input search
+Bước 3: Lọc ra các dữ liệu thỏa mãn điều kiện
+Bước 4: Gọi lại hàm renderListProduct và truyền dữ liệu vừa lọc được vào trong hàm
+
++ Add to cart (trong trang danh sách sản phẩm) => Thêm sản phẩm vào giỏ hàng
+Bước 1: Gán function cho button add to cart
+Bước 2: Khi function được gọi => 
+xử lý để lấy được thông tin sản phẩm mà người dùng click
+Bước 3: Xử lý thông tin sản phẩm
+	Dữ liệu của giỏ hàng cart = [];
+	TH1: Nếu trong giỏ hàng đã tồn tại sản phẩm
+	=> Tăng số lượng lên
+	TH2: Nếu trong giỏ hàng chưa tồn tại sản phẩm
+	=> Thêm mới sản phẩm vào trong giỏ hàng
+Bước 4: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
