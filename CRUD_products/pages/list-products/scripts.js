@@ -13,6 +13,11 @@ const $imageProduct = document.getElementById('image');
 const $descriptionProduct = document.getElementById('description');
 // Các button
 const $btnCreateProduct = document.getElementById('create-product');
+const $btnUpdateProduct = document.getElementById('update-product');
+// Modal bootstrap
+const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+	keyboard: false,
+});
 
 const formatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
@@ -80,7 +85,9 @@ function renderListProduct() {
 									<i class="fa-solid fa-ellipsis-vertical"></i>
 								</button>
 								<ul class="dropdown-menu" aria-labelledby="defaultDropdown">
-									<li><a class="dropdown-item" href="#">Cập nhật</a></li>
+									<li><a class="dropdown-item" href="#" onclick="getProductUpdate(${
+										product.id
+									})">Cập nhật</a></li>
 									<li><a class="dropdown-item" href="#" onclick="deleteProduct(${
 										product.id
 									})">Xóa</a></li>
@@ -153,3 +160,70 @@ function deleteProduct(productId) {
 	// Bước 5: Gọi lại hàm render để in ra dữ liệu mới nhất
 	renderListProduct();
 }
+
+// -Giai đoạn 1: Là khi bấm vào button cập nhật => in thông tin của sản phẩm lên các input
+// Bước 1: Gán function cho button Cập nhật
+function getProductUpdate(productId) {
+	console.log('productId: ', productId);
+	let productFind = null;
+	// Bước 2: Khi function được gọi =>
+	// xử lý để lấy được thông tin sản phẩm mà người dùng click
+	for (let product of listProduct) {
+		if (product.id === productId) {
+			productFind = product;
+		}
+	}
+	// Bước 3: Đổ dữ liệu lên các input tương ứng
+	// Mở modal lên
+	myModal.show();
+	$idProduct.value = productFind.id;
+	$idProduct.disabled = true;
+	$titleProduct.value = productFind.title;
+	$priceProduct.value = productFind.price;
+	$imageProduct.value = productFind.image;
+	$descriptionProduct.value = productFind.description;
+	// Bước 4: Show ra button "Cập nhật" và ẩn button "Thêm mới"
+	$btnUpdateProduct.style.display = 'inline';
+	$btnCreateProduct.style.display = 'none';
+}
+
+// -Giai đoạn 2:
+// Bước 1: Gán function cho button Cập nhật trong modal
+$btnUpdateProduct.addEventListener('click', function () {
+	// Bước 2: Lấy các thông tin mà người dùng vừa chỉnh sửa
+	const id = $idProduct.value;
+	const title = $titleProduct.value;
+	const price = $priceProduct.value;
+	const image = $imageProduct.value;
+	const description = $descriptionProduct.value;
+	// Bước 3: Tìm vị trí của sản phẩm trong danh sách (tìm index product trong listProduct)
+	let indexProduct = -1;
+	for (let i = 0; i < listProduct.length; i++) {
+		if (listProduct[i].id === Number(id)) {
+			indexProduct = i;
+		}
+	}
+	// Bước 4: Sửa thông tin sản phẩm
+	listProduct[indexProduct].title = title;
+	listProduct[indexProduct].price = price;
+	listProduct[indexProduct].image = image;
+	listProduct[indexProduct].description = description;
+	// Bước 5: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
+	localStorage.setItem('listProduct', JSON.stringify(listProduct));
+	// Bước 6: Gọi lại hàm renderListProduct để in ra thông tin sản phẩm mới nhất
+	renderListProduct();
+	// Bước 7: Khôi phục lại trạng thái ban đầu của giao diện
+	// Ẩn button Cập nhật
+	$btnUpdateProduct.style.display = 'none';
+	// Show button Thêm mới
+	$btnCreateProduct.style.display = 'inline';
+	// Reset input
+	$idProduct.value = '';
+	$idProduct.disabled = false;
+	$titleProduct.value = '';
+	$priceProduct.value = '';
+	$imageProduct.value = '';
+	$descriptionProduct.value = '';
+	// Đóng modal
+	myModal.hide();
+});
