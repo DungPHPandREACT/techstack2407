@@ -213,6 +213,13 @@ $btnUpdateProduct.addEventListener('click', function () {
 	// Bước 6: Gọi lại hàm renderListProduct để in ra thông tin sản phẩm mới nhất
 	renderListProduct();
 	// Bước 7: Khôi phục lại trạng thái ban đầu của giao diện
+	// Đóng modal
+	myModal.hide();
+	// Reset lại dữ liệu về trạng thái ban đầu
+	resetModal();
+});
+
+function resetModal() {
 	// Ẩn button Cập nhật
 	$btnUpdateProduct.style.display = 'none';
 	// Show button Thêm mới
@@ -224,6 +231,10 @@ $btnUpdateProduct.addEventListener('click', function () {
 	$priceProduct.value = '';
 	$imageProduct.value = '';
 	$descriptionProduct.value = '';
-	// Đóng modal
-	myModal.hide();
-});
+}
+
+document
+	.getElementById('staticBackdrop')
+	.addEventListener('hide.bs.modal', function (event) {
+		resetModal();
+	});
