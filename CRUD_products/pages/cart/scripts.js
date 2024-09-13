@@ -3,6 +3,11 @@ const $total_price = document.getElementById('total-price');
 
 const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+const formatter = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'VND',
+});
+
 function renderCart() {
 	let htmlCart = '';
 	let totalPrice = 0;
@@ -24,7 +29,7 @@ function renderCart() {
 				</div>
 			</td>
 			<td class="text-right font-weight-semibold align-middle p-4">
-				${item.price} VND
+				${formatter.format(item.price)}
 			</td>
 			<td class="align-middle p-4">
 				<input
@@ -34,7 +39,7 @@ function renderCart() {
 				/>
 			</td>
 			<td class="text-right font-weight-semibold align-middle p-4">
-				${item.quantity * item.price} VND
+				${formatter.format(item.quantity * item.price)}
 			</td>
 			<td class="text-center align-middle px-0">
 				<a
@@ -49,7 +54,7 @@ function renderCart() {
 	}
 
 	$container_cart.innerHTML = htmlCart;
-	$total_price.innerHTML = `<strong>${totalPrice} VND</strong>`;
+	$total_price.innerHTML = `<strong>${formatter.format(totalPrice)} VND</strong>`;
 }
 
 renderCart();

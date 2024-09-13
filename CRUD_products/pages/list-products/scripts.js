@@ -14,6 +14,11 @@ const $descriptionProduct = document.getElementById('description');
 // Các button
 const $btnCreateProduct = document.getElementById('create-product');
 
+const formatter = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'VND',
+});
+
 // Bước 1: gán event cho button thêm mới
 $btnCreateProduct.addEventListener('click', function () {
 	// Trong hàm
@@ -63,11 +68,24 @@ function renderListProduct() {
 						/>
 						<div class="card-body">
 							<h5 class="card-title">${product.title}</h5>
-							<p class="card-text mt-1 mb-1">${product.price} VND</p>
+							<p class="card-text mt-1 mb-1">${formatter.format(product.price)}</p>
 							<p class="card-text">${product.description}</p>
 							<div>
 								<button class="btn btn-primary">Xem chi tiết</button>
-								<button onclick="addToCart(${product.id})" type="button" class="btn btn-secondary" style="margin-left: 8px"><i class="fa-solid fa-cart-plus"></i></button>
+								<button onclick="addToCart(${
+									product.id
+								})" type="button" class="btn btn-secondary" style="margin-left: 8px"><i class="fa-solid fa-cart-plus"></i></button>
+								<div class="btn-group">
+								<button class="btn btn-secondary dropdown-toggle" type="button" style="margin-left: 8px" id="defaultDropdown" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+									<i class="fa-solid fa-ellipsis-vertical"></i>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+									<li><a class="dropdown-item" href="#">Cập nhật</a></li>
+									<li><a class="dropdown-item" href="#" onclick="deleteProduct(${
+										product.id
+									})">Xóa</a></li>
+								</ul>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -115,4 +133,23 @@ function addToCart(productId) {
 	}
 	// Bước 4: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
 	localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Bước 1: Gán function cho button Xóa
+function deleteProduct(productId) {
+	console.log('productId: ', productId);
+	// Bước 2: Khi function được gọi =>
+	// xử lý để lấy được vị trí sản phẩm trong danh sách sản phẩm (index product trong listProduct)
+	let indexProduct = -1;
+	for (let i = 0; i < listProduct.length; i++) {
+		if (listProduct[i].id === productId) {
+			indexProduct = i;
+		}
+	}
+	// Bước 3: Xóa sản phẩm khỏi danh sách (xóa phần tử khỏi mảng)
+	listProduct.splice(indexProduct, 1);
+	// Bước 4: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
+	localStorage.setItem('listProduct', JSON.stringify(listProduct));
+	// Bước 5: Gọi lại hàm render để in ra dữ liệu mới nhất
+	renderListProduct();
 }
