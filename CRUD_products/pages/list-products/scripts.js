@@ -4,6 +4,7 @@
 // JSON.parse(data) => chuyển đổi data từ định dạng json về kiểu dữ liệu ban đầu
 
 const listProduct = JSON.parse(localStorage.getItem('listProduct')) || [];
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
 // Các input
 const $idProduct = document.getElementById('id');
 const $titleProduct = document.getElementById('title');
@@ -66,7 +67,7 @@ function renderListProduct() {
 							<p class="card-text">${product.description}</p>
 							<div>
 								<button class="btn btn-primary">Xem chi tiết</button>
-								<button type="button" class="btn btn-secondary" style="margin-left: 8px"><i class="fa-solid fa-cart-plus"></i></button>
+								<button onclick="addToCart(${product.id})" type="button" class="btn btn-secondary" style="margin-left: 8px"><i class="fa-solid fa-cart-plus"></i></button>
 							</div>
 						</div>
 					</div>
@@ -78,3 +79,40 @@ function renderListProduct() {
 }
 
 renderListProduct();
+
+// Bước 1: Gán function cho button add to cart
+function addToCart(productId) {
+	let productFind = null;
+	// Bước 2: Khi function được gọi =>
+	// xử lý để lấy được thông tin sản phẩm mà người dùng click
+	for (let product of listProduct) {
+		if (product.id === productId) {
+			productFind = product;
+		}
+	}
+	// Bước 3: Xử lý thông tin sản phẩm
+	let indexProduct = -1;
+	for (let i = 0; i < cart.length; i++) {
+		if (productFind.id === cart[i].id) {
+			indexProduct = i;
+		}
+	}
+	// TH1: Nếu trong giỏ hàng chưa tồn tại sản phẩm
+	// 	=> Thêm mới sản phẩm vào trong giỏ hàng
+	if (indexProduct === -1) {
+		const newProduct = {
+			id: productFind.id,
+			title: productFind.title,
+			image: productFind.image,
+			price: productFind.price,
+			quantity: 1,
+		};
+		cart.push(newProduct);
+	} else {
+		// 	TH2: Nếu trong giỏ hàng đã tồn tại sản phẩm
+		// 	=> Tăng số lượng lên
+		cart[indexProduct].quantity = cart[indexProduct].quantity + 1;
+	}
+	// Bước 4: Sau khi xử lý dữ liệu => lưu thông tin vào trong local storage
+	localStorage.setItem('cart', JSON.stringify(cart));
+}
