@@ -30,10 +30,14 @@ class Employee extends Person {
         console.log(`Employee ID: ${this.employeeId}`);
         console.log(`Email: ${this.email}`);
     }
+    // overwrite
+    findAddress() {
+        console.log('Đã tìm thấy địa chỉ');
+    }
 }
 // let person = new Person('Merry', 20, 'mary@gmail.com');
 // person.greeting()
 // console.log(person.email);
 // console.log(person.age);
 let employee = new Employee('John', 20, 'mary@gmail.com', 1234);
-employee.displayEmployeeInfo();
+employee.findAddress();

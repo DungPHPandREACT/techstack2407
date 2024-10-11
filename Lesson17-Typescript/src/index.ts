@@ -69,6 +69,11 @@ class Employee extends Person {
         console.log(`Employee ID: ${this.employeeId}`)
         console.log(`Email: ${this.email}`)
     }
+
+    // overwrite
+    findAddress(): void {
+        console.log('Đã tìm thấy địa chỉ')
+    }
 }
 
 // let person = new Person('Merry', 20, 'mary@gmail.com');
@@ -78,4 +83,4 @@ class Employee extends Person {
 
 let employee = new Employee('John', 20, 'mary@gmail.com', 1234);
 
-employee.displayEmployeeInfo();
+employee.findAddress();
