@@ -17,49 +17,54 @@ import {
 function App() {
 	const [isShowModal, setIsShowModal] = useState(false);
 	const [blogPost, setBlogPost] = useState({});
-
 	const [status, setStatus] = useState('create');
+	const [categoryFilter, setCategoryFilter] = useState('all');
 
 	const [listBlogPost, setListBlogPost] = useState([
 		{
 			id: 1,
 			image: 'https://dummyimage.com/850x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
-			title: 'Featured Post Title',
+			title: 'Đây là bài viết ReactJS',
 			description:
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!',
+			category: 'reactjs',
 		},
 		{
 			id: 2,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
-			title: 'Post Title',
+			title: 'Đây là bài viết HTML',
 			description:
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
+			category: 'html',
 		},
 		{
 			id: 3,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
-			title: 'Post Title',
+			title: 'Đây là bài viết CSS',
 			description:
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
+			category: 'css',
 		},
 		{
 			id: 4,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
-			title: 'Post Title',
+			title: 'Đây là bài viết Javascript',
 			description:
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
+			category: 'javascript',
 		},
 		{
 			id: 5,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
-			title: 'Post Title',
+			title: 'Đây là bài viết NodeJS',
 			description:
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
+			category: 'nodejs',
 		},
 	]);
 
@@ -182,6 +187,11 @@ function App() {
 		handleCloseModal();
 	};
 
+	const handleSelectCategory = (category) => {
+		console.log(category);
+		setCategoryFilter(category);
+	};
+
 	return (
 		<DefaultPage>
 			<Modal isOpen={isShowModal} toggle={handleCloseModal} fullscreen={true}>
@@ -252,20 +262,28 @@ function App() {
 					{/* Blog entries*/}
 					<div className='col-lg-8'>
 						<div className='row'>
-							{listBlogPost.map((blogPost, index) => {
-								return (
-									<BlogPost
-										index={index}
-										id={blogPost.id}
-										title={blogPost.title}
-										image={blogPost.image}
-										description={blogPost.description}
-										createdAt={blogPost.createdAt}
-										onDelete={handleDeleteBlogPost}
-										onUpdate={handleOpenModalUpdateBlogPost}
-									/>
-								);
-							})}
+							{listBlogPost
+								.filter((blogPost) => {
+									if (categoryFilter === 'all') {
+										return true;
+									} else {
+										return blogPost.category === categoryFilter;
+									}
+								})
+								.map((blogPost, index) => {
+									return (
+										<BlogPost
+											index={index}
+											id={blogPost.id}
+											title={blogPost.title}
+											image={blogPost.image}
+											description={blogPost.description}
+											createdAt={blogPost.createdAt}
+											onDelete={handleDeleteBlogPost}
+											onUpdate={handleOpenModalUpdateBlogPost}
+										/>
+									);
+								})}
 						</div>
 
 						{/* Pagination*/}
@@ -347,9 +365,22 @@ function App() {
 							</div>
 							<div className='card-body'>
 								<div className='row'>
+									<div className='col-lg-6'>
+										<Button
+											color='link'
+											onClick={() => handleSelectCategory('all')}
+										>
+											Tất cả
+										</Button>
+									</div>
 									{categories.map((category) => (
 										<div className='col-lg-6'>
-											<Button color='link'>{category.label}</Button>
+											<Button
+												color='link'
+												onClick={() => handleSelectCategory(category.value)}
+											>
+												{category.label}
+											</Button>
 										</div>
 									))}
 								</div>
