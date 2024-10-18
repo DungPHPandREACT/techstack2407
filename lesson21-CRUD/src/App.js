@@ -18,8 +18,11 @@ function App() {
 	const [isShowModal, setIsShowModal] = useState(false);
 	const [blogPost, setBlogPost] = useState({});
 
+	const [status, setStatus] = useState('create');
+
 	const [listBlogPost, setListBlogPost] = useState([
 		{
+			id: 1,
 			image: 'https://dummyimage.com/850x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
 			title: 'Featured Post Title',
@@ -27,6 +30,7 @@ function App() {
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!',
 		},
 		{
+			id: 2,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
 			title: 'Post Title',
@@ -34,6 +38,7 @@ function App() {
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
 		},
 		{
+			id: 3,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
 			title: 'Post Title',
@@ -41,6 +46,7 @@ function App() {
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
 		},
 		{
+			id: 4,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
 			title: 'Post Title',
@@ -48,6 +54,7 @@ function App() {
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla.',
 		},
 		{
+			id: 5,
 			image: 'https://dummyimage.com/700x350/dee2e6/6c757d.jpg',
 			createdAt: 'January 1, 2023',
 			title: 'Post Title',
@@ -124,11 +131,54 @@ function App() {
 	};
 
 	const handleCreateBlogPost = () => {
-		const newListBlogPost = [...listBlogPost, blogPost];
+		const newListBlogPost = [...listBlogPost, { ...blogPost, id: Date.now() }];
 		setListBlogPost(newListBlogPost);
 
 		// Reset input
 		setBlogPost({});
+		handleCloseModal();
+	};
+
+	const handleDeleteBlogPost = (id) => {
+		const newListBlogPost = listBlogPost.filter(
+			(blogPost) => blogPost.id !== id
+		);
+
+		setListBlogPost(newListBlogPost);
+	};
+
+	const handleOpenModalUpdateBlogPost = (id) => {
+		console.log('updated: ', id);
+		let result = null;
+		for (let blogPost of listBlogPost) {
+			if (blogPost.id === id) {
+				result = blogPost;
+			}
+		}
+
+		setBlogPost(result);
+		setIsShowModal(true);
+		setStatus('update');
+	};
+
+	const handleUpdateBlogPost = () => {
+		console.log('blogPost: ', blogPost);
+		let index = -1;
+		for (let i = 0; i < listBlogPost.length; i++) {
+			if (listBlogPost[i].id === blogPost.id) {
+				index = i;
+			}
+		}
+
+		const listBlogPostTemp = [...listBlogPost];
+		listBlogPostTemp[index] = { ...blogPost };
+
+		setListBlogPost(listBlogPostTemp);
+		// cập nhật trạng thái
+		setStatus('create');
+		// reset dữ liệu
+		setBlogPost({});
+		// đóng modal
 		handleCloseModal();
 	};
 
@@ -144,12 +194,18 @@ function App() {
 								name='title'
 								placeholder='Nhập tiêu đề bài viết'
 								type='text'
+								value={blogPost.title}
 								onChange={handleChange}
 							/>
 						</Col>
 						<Col md={5}>
 							<Label>Danh mục bài viết</Label>
-							<Input name='category' type='select' onChange={handleChange}>
+							<Input
+								name='category'
+								type='select'
+								onChange={handleChange}
+								value={blogPost.category}
+							>
 								{categories.map((category) => (
 									<option value={category.value}>{category.label}</option>
 								))}
@@ -160,12 +216,18 @@ function App() {
 							<Input
 								name='description'
 								type='textarea'
+								value={blogPost.description}
 								onChange={handleChange}
 							/>
 						</Col>
 						<Col md={10}>
 							<Label>Ảnh liên quan</Label>
-							<Input name='image' type='text' onChange={handleChange} />
+							<Input
+								name='image'
+								type='text'
+								value={blogPost.image}
+								onChange={handleChange}
+							/>
 						</Col>
 					</Row>
 				</ModalBody>
@@ -173,9 +235,15 @@ function App() {
 					<Button color='danger' onClick={handleCloseModal}>
 						Hủy
 					</Button>
-					<Button color='primary' onClick={handleCreateBlogPost}>
-						Thêm mới
-					</Button>
+					{status === 'create' ? (
+						<Button color='primary' onClick={handleCreateBlogPost}>
+							Thêm mới bài viết
+						</Button>
+					) : (
+						<Button color='primary' onClick={handleUpdateBlogPost}>
+							Cập nhật thông tin bài viết
+						</Button>
+					)}
 				</ModalFooter>
 			</Modal>
 			{/* Page content */}
@@ -188,10 +256,13 @@ function App() {
 								return (
 									<BlogPost
 										index={index}
+										id={blogPost.id}
 										title={blogPost.title}
 										image={blogPost.image}
 										description={blogPost.description}
 										createdAt={blogPost.createdAt}
+										onDelete={handleDeleteBlogPost}
+										onUpdate={handleOpenModalUpdateBlogPost}
 									/>
 								);
 							})}
