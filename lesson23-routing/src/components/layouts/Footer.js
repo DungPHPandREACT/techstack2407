@@ -1,4 +1,5 @@
 const Footer = () => {
+	// "/assets/img/about-bg.jpg"
 	return (
 		<footer className='border-top'>
 			<div className='container px-4 px-lg-5'>

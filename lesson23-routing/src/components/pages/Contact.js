@@ -1,4 +1,12 @@
+import { Navigate } from 'react-router-dom';
+
 const Contact = () => {
+	let role = 'user';
+
+	if (role !== 'admin') {
+		return <Navigate to='/' />;
+	}
+
 	return (
 		<main className='mb-4'>
 			<div className='container px-4 px-lg-5'>

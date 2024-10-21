@@ -11137,3 +11137,7 @@ header.masthead .post-heading .meta a {
 		font-size: 2.25rem;
 	}
 }
+
+a.active {
+	font-size: 34px !important;
+}
