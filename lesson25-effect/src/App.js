@@ -6,6 +6,7 @@ const App = () => {
 	const [age2, setAge2] = useState(18);
 	const [showNumber, setShowNumber] = useState(false);
 	const [listStudent, setListStudent] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	const handleToggleShowNumber = () => {
 		setShowNumber(!showNumber);
@@ -42,12 +43,17 @@ const App = () => {
 	}, [age1]);
 
 	const fetchData = async () => {
-		const response = await fetch(
-			'https://6680276e56c2c76b495b50ad.mockapi.io/api/v1/students'
-		);
-		const data = await response.json();
-
-		setListStudent(data);
+		try {
+			const response = await fetch(
+				'https://6680276e56c2c76b495b50ad.mockapi.io/api/v1/students'
+			);
+			const data = await response.json();
+			setListStudent(data);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	useEffect(() => {
@@ -70,9 +76,13 @@ const App = () => {
 			<button onClick={handleDecrease2}>Giảm</button> */}
 
 			<h1>Danh sách tên các bạn học sinh</h1>
-			{listStudent.map((student) => {
-				return <h1>{student.name}</h1>;
-			})}
+			{loading ? (
+				<h1>Loading...</h1>
+			) : (
+				listStudent.map((student) => {
+					return <h1>{student.name}</h1>;
+				})
+			)}
 		</div>
 	);
 };
