@@ -1,5 +1,7 @@
+import { configureStore } from '@reduxjs/toolkit';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk } from 'redux-thunk';
+import counterReducerToolkit from '../slices/counterSlice';
 
 // Initial state
 const initialStudent = {
@@ -54,6 +56,14 @@ const rootReducer = combineReducers({
 	students: studentsReducer,
 });
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+// Store redux truyền thống
+// const store = createStore(rootReducer, applyMiddleware(thunk));
+
+// Store tạo ra bằng redux toolkit
+const store = configureStore({
+	reducer: {
+		counter: counterReducerToolkit,
+	},
+});
 
 export default store;
