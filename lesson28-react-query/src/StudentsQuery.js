@@ -1,52 +1,35 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 const StudentsQuery = () => {
-	const queryClient = useQueryClient();
-
-	const [name, setName] = useState('');
+	const queryClient = new QueryClient();
 	const fetchStudents = async () => {
 		return axios.get(
 			'https://6680276e56c2c76b495b50ad.mockapi.io/api/v1/students'
 		);
 	};
 
-	const addStudent = (newStudent) => {
-		return axios.post(
-			'https://6680276e56c2c76b495b50ad.mockapi.io/api/v1/students',
-			newStudent
-		);
-	};
-
 	const query = useQuery({
 		queryKey: ['students'],
 		queryFn: fetchStudents,
-		staleTime: 1000,
-		gcTime: 1000,
-	});
-
-	const mutation = useMutation({
-		mutationFn: addStudent,
-		onSuccess: () => {
-			alert('Thêm mới học sinh thành công');
-			queryClient.invalidateQueries({ queryKey: ['students'] });
-		},
+		staleTime: 10000,
+		gcTime: 10000,
+		refetchOnWindowFocus: true,
 	});
 
 	const { data, error, isLoading } = query;
 
-	const handleChangeName = (event) => {
-		setName(event.target.value);
-	};
-
-	const handleAddStudent = () => {
-		const newStudent = {
-			name,
-		};
-
-		console.log(newStudent);
-		mutation.mutate(newStudent);
+	const handlePrefetchingStudentDetail = (id) => {
+		queryClient.prefetchQuery({
+			queryKey: ['student', id],
+			queryFn: () =>
+				axios.get(
+					`https://6680276e56c2c76b495b50ad.mockapi.io/api/v1/students/${id}`
+				),
+			gcTime: 60000,
+			staleTime: 60000,
+		});
 	};
 
 	if (isLoading) {
@@ -59,13 +42,13 @@ const StudentsQuery = () => {
 		<div style={{ display: 'flex' }}>
 			<ul>
 				{data.data.map((student) => (
-					<li>{student.name}</li>
+					<li onMouseEnter={() => handlePrefetchingStudentDetail(student.id)}>
+						<NavLink to={`/student-query/${student.id}`}>
+							{student.name}
+						</NavLink>
+					</li>
 				))}
 			</ul>
-			<div>
-				<input type='text' onChange={handleChangeName} />
-				<button onClick={handleAddStudent}>Thêm mới học sinh</button>
-			</div>
 		</div>
 	);
 };
