@@ -1,3 +1,4 @@
+```jsx
 -route:
 	route cho user
 		Chung
@@ -37,4 +38,4 @@
 	+Thi thử
 	+Bảng điểm
 	+Liên hệ (user gửi email feedback cho admin)
-	
+```
