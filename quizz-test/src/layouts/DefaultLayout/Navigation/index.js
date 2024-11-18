@@ -1,11 +1,21 @@
-import { Avatar, Button, Checkbox, Dropdown, Form, Input, Modal } from 'antd';
+import {
+	Avatar,
+	Button,
+	Checkbox,
+	Dropdown,
+	Form,
+	Input,
+	Modal,
+	notification,
+} from 'antd';
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import './navigation.css';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useAddUser, useGetUsers } from '../../../apis/users';
 
-const FormLogin = ({ onRegister }) => {
+const FormLogin = ({ onRegister, formLogin }) => {
 	return (
 		<Form name='basic' layout='vertical'>
 			<Form.Item
@@ -15,10 +25,16 @@ const FormLogin = ({ onRegister }) => {
 						required: true,
 					},
 				]}
+				validateStatus={formLogin.errors.email && 'error'}
+				help={formLogin.errors.email}
 			>
-				<Input size='large' name='email' />
+				<Input
+					size='large'
+					name='email'
+					value={formLogin.values.email}
+					onChange={formLogin.handleChange}
+				/>
 			</Form.Item>
-
 			<Form.Item
 				label='Mật khẩu'
 				rules={[
@@ -26,8 +42,15 @@ const FormLogin = ({ onRegister }) => {
 						required: true,
 					},
 				]}
+				validateStatus={formLogin.errors.password && 'error'}
+				help={formLogin.errors.password}
 			>
-				<Input.Password size='large' name='password' />
+				<Input.Password
+					size='large'
+					name='password'
+					value={formLogin.values.password}
+					onChange={formLogin.handleChange}
+				/>
 			</Form.Item>
 
 			<div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -102,6 +125,8 @@ const FormRegister = ({ formRegister }) => {
 };
 
 const Navigation = () => {
+	const [api, contextHolder] = notification.useNotification();
+
 	const [isShowModal, setIsShowModal] = useState(false);
 	const [statusModal, setStatusModal] = useState('register');
 
@@ -149,14 +174,14 @@ const Navigation = () => {
 		setStatusModal('register');
 	};
 
-	const handleSubmit = () => {
-		if (statusModal === 'register') {
-			formRegister.handleSubmit();
-			return;
-		}
-
-		console.log('login...');
-	};
+	const { data: listUsers } = useGetUsers();
+	const { mutate: addUser } = useAddUser(() => {
+		handleHideModal();
+		api.success({
+			message: 'Đăng ký thành công',
+			placement: 'topRight',
+		});
+	});
 
 	const formRegister = useFormik({
 		initialValues: {
@@ -179,11 +204,56 @@ const Navigation = () => {
 		}),
 		onSubmit: (data) => {
 			console.log('Form register: ', data);
+			addUser(data);
 		},
 	});
 
+	const formLogin = useFormik({
+		initialValues: {
+			email: '',
+			password: '',
+		},
+		validationSchema: Yup.object().shape({
+			email: Yup.string()
+				.required('Email không được để trống')
+				.email('Chưa đúng định email'),
+			password: Yup.string()
+				.min(6, 'Mật khẩu không hợp lệ')
+				.max(24, 'Mật khẩu không hợp lệ')
+				.required('Mật khẩu không được để trống'),
+		}),
+		onSubmit: (data) => {
+			for (let user of listUsers) {
+				if (user.email === data.email && user.password === data.password) {
+					handleHideModal();
+					api.success({
+						message: 'Đăng nhập thành công',
+						placement: 'topRight',
+					});
+
+					return;
+				}
+			}
+
+			api.error({
+				message: 'Đăng nhập thất bại',
+				placement: 'topRight',
+			});
+		},
+	});
+
+	const handleSubmit = () => {
+		if (statusModal === 'register') {
+			formRegister.handleSubmit();
+			return;
+		}
+
+		formLogin.handleSubmit();
+	};
+
 	return (
 		<>
+			{contextHolder}
 			<nav className='nav-app'>
 				<div className='wrapper'>
 					<div className='logo'>
@@ -275,7 +345,10 @@ const Navigation = () => {
 				{statusModal === 'register' ? (
 					<FormRegister formRegister={formRegister} />
 				) : (
-					<FormLogin onRegister={handleChangeStatusRegister} />
+					<FormLogin
+						onRegister={handleChangeStatusRegister}
+						formLogin={formLogin}
+					/>
 				)}
 			</Modal>
 		</>
