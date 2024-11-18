@@ -1,9 +1,9 @@
 import { Avatar, Button, Checkbox, Dropdown, Form, Input, Modal } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import './navigation.css';
 
-const FormLogin = ({ onRegister, formLogin }) => {
+const FormLogin = ({ onRegister }) => {
 	return (
 		<Form name='basic' layout='vertical'>
 			<Form.Item
@@ -13,15 +13,8 @@ const FormLogin = ({ onRegister, formLogin }) => {
 						required: true,
 					},
 				]}
-				validateStatus={formLogin.errors.email && 'error'}
-				help={formLogin.errors.email && formLogin.errors.email}
 			>
-				<Input
-					size='large'
-					name='email'
-					onChange={formLogin.handleChange}
-					value={formLogin.values.email}
-				/>
+				<Input size='large' name='email' />
 			</Form.Item>
 
 			<Form.Item
@@ -31,15 +24,8 @@ const FormLogin = ({ onRegister, formLogin }) => {
 						required: true,
 					},
 				]}
-				validateStatus={formLogin.errors.password && 'error'}
-				help={formLogin.errors.password && formLogin.errors.password}
 			>
-				<Input.Password
-					size='large'
-					name='password'
-					onChange={formLogin.handleChange}
-					value={formLogin.values.password}
-				/>
+				<Input.Password size='large' name='password' />
 			</Form.Item>
 
 			<div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -55,7 +41,7 @@ const FormLogin = ({ onRegister, formLogin }) => {
 	);
 };
 
-const FormRegister = ({ formRegister }) => {
+const FormRegister = () => {
 	return (
 		<Form name='basic' layout='vertical'>
 			<Form.Item
@@ -65,15 +51,8 @@ const FormRegister = ({ formRegister }) => {
 						required: true,
 					},
 				]}
-				validateStatus={formRegister.errors.email && 'error'}
-				help={formRegister.errors.email && formRegister.errors.email}
 			>
-				<Input
-					size='large'
-					name='email'
-					onChange={formRegister.handleChange}
-					value={formRegister.values.email}
-				/>
+				<Input size='large' name='email' />
 			</Form.Item>
 			<Form.Item
 				label='Tên tài khoản'
@@ -82,15 +61,8 @@ const FormRegister = ({ formRegister }) => {
 						required: true,
 					},
 				]}
-				validateStatus={formRegister.errors.username && 'error'}
-				help={formRegister.errors.username && formRegister.errors.username}
 			>
-				<Input
-					size='large'
-					name='username'
-					onChange={formRegister.handleChange}
-					value={formRegister.values.username}
-				/>
+				<Input size='large' name='username' />
 			</Form.Item>
 			<Form.Item
 				label='Mật khẩu'
@@ -99,21 +71,17 @@ const FormRegister = ({ formRegister }) => {
 						required: true,
 					},
 				]}
-				validateStatus={formRegister.errors.email && 'error'}
-				help={formRegister.errors.email && formRegister.errors.email}
 			>
-				<Input.Password
-					size='large'
-					name='password'
-					onChange={formRegister.handleChange}
-					value={formRegister.values.password}
-				/>
+				<Input.Password size='large' name='password' />
 			</Form.Item>
 		</Form>
 	);
 };
 
 const Navigation = () => {
+	const [isShowModal, setIsShowModal] = useState(false);
+	const [statusModal, setStatusModal] = useState('register');
+
 	const items = [
 		{
 			key: '1',
@@ -135,6 +103,37 @@ const Navigation = () => {
 			label: <Link to='/admin'>Quản trị</Link>,
 		},
 	];
+
+	const hanldeShowModal = () => {
+		setIsShowModal(true);
+	};
+
+	const handleHideModal = () => {
+		setIsShowModal(false);
+	};
+
+	const handleClickButtonRegister = () => {
+		setStatusModal('register');
+		hanldeShowModal();
+	};
+
+	const handleClickButtonLogin = () => {
+		setStatusModal('login');
+		hanldeShowModal();
+	};
+
+	const handleChangeStatusRegister = () => {
+		setStatusModal('register');
+	};
+
+	const handleSubmit = () => {
+		if (statusModal === 'register') {
+			console.log('register...');
+			return;
+		}
+
+		console.log('login...');
+	};
 
 	return (
 		<>
@@ -194,28 +193,43 @@ const Navigation = () => {
 
 					<div className='profile'>
 						{/* Đã đăng nhập */}
-						<Dropdown menu={{ items }} placement='top'>
+						{/* <Dropdown menu={{ items }} placement='top'>
 							<Avatar size='large' style={{ width: '55px', height: '55px' }}>
 								D
 							</Avatar>
-						</Dropdown>
+						</Dropdown> */}
 						{/* Chưa đăng nhập */}
-						{/* <>
-							<Button style={{ margin: '0px 8px' }}>Đăng ký</Button>
-							<Button style={{ margin: '0px 8px' }}>Đăng nhập</Button>
-						</> */}
+						<>
+							<Button
+								onClick={handleClickButtonRegister}
+								style={{ margin: '0px 8px' }}
+							>
+								Đăng ký
+							</Button>
+							<Button
+								onClick={handleClickButtonLogin}
+								style={{ margin: '0px 8px' }}
+							>
+								Đăng nhập
+							</Button>
+						</>
 					</div>
 				</div>
 			</nav>
 			<Modal
-				title={'Đăng nhập'}
-				open={false}
-				okText={'Đăng nhập'}
+				title={statusModal === 'register' ? 'Đăng ký' : 'Đăng nhập'}
+				open={isShowModal}
+				okText={statusModal === 'register' ? 'Đăng ký' : 'Đăng nhập'}
 				cancelText='Đóng lại'
 				maskClosable={false}
+				onOk={handleSubmit}
+				onCancel={handleHideModal}
 			>
-				<FormLogin />
-				{/* <FormRegister /> */}
+				{statusModal === 'register' ? (
+					<FormRegister />
+				) : (
+					<FormLogin onRegister={handleChangeStatusRegister} />
+				)}
 			</Modal>
 		</>
 	);
