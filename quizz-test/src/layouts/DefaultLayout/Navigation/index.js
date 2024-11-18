@@ -2,6 +2,8 @@ import { Avatar, Button, Checkbox, Dropdown, Form, Input, Modal } from 'antd';
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import './navigation.css';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const FormLogin = ({ onRegister }) => {
 	return (
@@ -41,7 +43,7 @@ const FormLogin = ({ onRegister }) => {
 	);
 };
 
-const FormRegister = () => {
+const FormRegister = ({ formRegister }) => {
 	return (
 		<Form name='basic' layout='vertical'>
 			<Form.Item
@@ -51,8 +53,15 @@ const FormRegister = () => {
 						required: true,
 					},
 				]}
+				validateStatus={formRegister.errors.email && 'error'}
+				help={formRegister.errors.email}
 			>
-				<Input size='large' name='email' />
+				<Input
+					size='large'
+					name='email'
+					value={formRegister.values.email}
+					onChange={formRegister.handleChange}
+				/>
 			</Form.Item>
 			<Form.Item
 				label='Tên tài khoản'
@@ -61,8 +70,15 @@ const FormRegister = () => {
 						required: true,
 					},
 				]}
+				validateStatus={formRegister.errors.username && 'error'}
+				help={formRegister.errors.username}
 			>
-				<Input size='large' name='username' />
+				<Input
+					size='large'
+					name='username'
+					value={formRegister.values.username}
+					onChange={formRegister.handleChange}
+				/>
 			</Form.Item>
 			<Form.Item
 				label='Mật khẩu'
@@ -71,8 +87,15 @@ const FormRegister = () => {
 						required: true,
 					},
 				]}
+				validateStatus={formRegister.errors.password && 'error'}
+				help={formRegister.errors.password}
 			>
-				<Input.Password size='large' name='password' />
+				<Input.Password
+					size='large'
+					name='password'
+					value={formRegister.values.password}
+					onChange={formRegister.handleChange}
+				/>
 			</Form.Item>
 		</Form>
 	);
@@ -128,12 +151,36 @@ const Navigation = () => {
 
 	const handleSubmit = () => {
 		if (statusModal === 'register') {
-			console.log('register...');
+			formRegister.handleSubmit();
 			return;
 		}
 
 		console.log('login...');
 	};
+
+	const formRegister = useFormik({
+		initialValues: {
+			email: '',
+			username: '',
+			password: '',
+		},
+		validationSchema: Yup.object().shape({
+			email: Yup.string()
+				.required('Email không được để trống')
+				.email('Chưa đúng định email'),
+			username: Yup.string()
+				.min(2, 'Tên tài khoản quá ngắn')
+				.max(50, 'Tên tài khoản quá dài')
+				.required('Tên tài khoản không được để trống'),
+			password: Yup.string()
+				.min(6, 'Mật khẩu không hợp lệ')
+				.max(24, 'Mật khẩu không hợp lệ')
+				.required('Mật khẩu không được để trống'),
+		}),
+		onSubmit: (data) => {
+			console.log('Form register: ', data);
+		},
+	});
 
 	return (
 		<>
@@ -226,7 +273,7 @@ const Navigation = () => {
 				onCancel={handleHideModal}
 			>
 				{statusModal === 'register' ? (
-					<FormRegister />
+					<FormRegister formRegister={formRegister} />
 				) : (
 					<FormLogin onRegister={handleChangeStatusRegister} />
 				)}
