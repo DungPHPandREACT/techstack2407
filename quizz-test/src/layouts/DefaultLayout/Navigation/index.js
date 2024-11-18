@@ -8,12 +8,13 @@ import {
 	Modal,
 	notification,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import './navigation.css';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useAddUser, useGetUsers } from '../../../apis/users';
+import AuthContext from '../../../contexts/AuthContext';
 
 const FormLogin = ({ onRegister, formLogin }) => {
 	return (
@@ -127,6 +128,8 @@ const FormRegister = ({ formRegister }) => {
 const Navigation = () => {
 	const [api, contextHolder] = notification.useNotification();
 
+	const { userCurrent, onChangeUserCurrent } = useContext(AuthContext);
+
 	const [isShowModal, setIsShowModal] = useState(false);
 	const [statusModal, setStatusModal] = useState('register');
 
@@ -141,12 +144,12 @@ const Navigation = () => {
 		},
 		{
 			key: '3',
-			label: <div>Đăng xuất</div>,
+			label: <div onClick={() => onChangeUserCurrent(null)}>Đăng xuất</div>,
 		},
 		{
 			type: 'divider',
 		},
-		{
+		userCurrent?.role === 'admin' && {
 			key: '4',
 			label: <Link to='/admin'>Quản trị</Link>,
 		},
@@ -175,12 +178,24 @@ const Navigation = () => {
 	};
 
 	const { data: listUsers } = useGetUsers();
-	const { mutate: addUser } = useAddUser(() => {
-		handleHideModal();
-		api.success({
-			message: 'Đăng ký thành công',
-			placement: 'topRight',
-		});
+	const { mutate: addUser } = useAddUser({
+		callbackSuccess: (data) => {
+			handleHideModal();
+			api.success({
+				message: 'Đăng ký thành công',
+				placement: 'topRight',
+			});
+
+			onChangeUserCurrent(data.data);
+			localStorage.setItem('user', JSON.stringify(data.data));
+		},
+		callbackError: (error) => {
+			api.error({
+				message: 'Đăng ký thất bại',
+				description: error,
+				placement: 'topRight',
+			});
+		},
 	});
 
 	const formRegister = useFormik({
@@ -204,7 +219,22 @@ const Navigation = () => {
 		}),
 		onSubmit: (data) => {
 			console.log('Form register: ', data);
-			addUser(data);
+			let isExistEmail = false;
+			for (let user of listUsers) {
+				if (user.email === data.email) {
+					isExistEmail = true;
+				}
+			}
+
+			if (isExistEmail) {
+				api.error({
+					message: 'Đăng ký thất bại',
+					description: 'Email đã tồn tại.',
+					placement: 'topRight',
+				});
+			} else {
+				addUser(data);
+			}
 		},
 	});
 
@@ -230,6 +260,9 @@ const Navigation = () => {
 						message: 'Đăng nhập thành công',
 						placement: 'topRight',
 					});
+					onChangeUserCurrent(user);
+
+					localStorage.setItem('user', JSON.stringify(user));
 
 					return;
 				}
@@ -309,27 +342,35 @@ const Navigation = () => {
 					</label>
 
 					<div className='profile'>
-						{/* Đã đăng nhập */}
-						{/* <Dropdown menu={{ items }} placement='top'>
-							<Avatar size='large' style={{ width: '55px', height: '55px' }}>
-								D
-							</Avatar>
-						</Dropdown> */}
-						{/* Chưa đăng nhập */}
-						<>
-							<Button
-								onClick={handleClickButtonRegister}
-								style={{ margin: '0px 8px' }}
-							>
-								Đăng ký
-							</Button>
-							<Button
-								onClick={handleClickButtonLogin}
-								style={{ margin: '0px 8px' }}
-							>
-								Đăng nhập
-							</Button>
-						</>
+						{userCurrent ? (
+							<>
+								{/* Đã đăng nhập */}
+								<Dropdown menu={{ items }} placement='top'>
+									<Avatar
+										size='large'
+										style={{ width: '55px', height: '55px' }}
+									>
+										{userCurrent.username.slice(0, 1)}
+									</Avatar>
+								</Dropdown>
+							</>
+						) : (
+							<>
+								{/* Chưa đăng nhập */}
+								<Button
+									onClick={handleClickButtonRegister}
+									style={{ margin: '0px 8px' }}
+								>
+									Đăng ký
+								</Button>
+								<Button
+									onClick={handleClickButtonLogin}
+									style={{ margin: '0px 8px' }}
+								>
+									Đăng nhập
+								</Button>
+							</>
+						)}
 					</div>
 				</div>
 			</nav>

@@ -23,14 +23,17 @@ export const useGetUsers = () => {
 	});
 };
 
-export const useAddUser = (callbackSuccess) => {
+export const useAddUser = ({ callbackSuccess, callbackError }) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: addUser,
-		onSuccess: () => {
+		onSuccess: (data) => {
 			queryClient.invalidateQueries(['users']);
-			callbackSuccess();
+			callbackSuccess(data);
+		},
+		onError: (err) => {
+			callbackError();
 		},
 	});
 };

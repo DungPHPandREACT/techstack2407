@@ -4,7 +4,8 @@
       "email": "admin@example.com",
       "password": "123456",
       "username": "admin",
-      "id": "5221"
+      "id": "5221",
+      "role": "admin"
     },
     {
       "email": "user1@example.com",
@@ -22,6 +23,30 @@
       "id": "3f74",
       "email": "user2@gmail.com",
       "username": "user2",
+      "password": "12345678"
+    },
+    {
+      "id": "84c1",
+      "email": "user3@gmail.com",
+      "username": "user3",
+      "password": "12345678"
+    },
+    {
+      "id": "bf08",
+      "email": "user4@gmail.com",
+      "username": "user4",
+      "password": "12345678"
+    },
+    {
+      "id": "09bd",
+      "email": "user5@gmail.com",
+      "username": "user5",
+      "password": "12345678"
+    },
+    {
+      "id": "2943",
+      "email": "user6@gmail.com",
+      "username": "user6",
       "password": "12345678"
     }
   ]
