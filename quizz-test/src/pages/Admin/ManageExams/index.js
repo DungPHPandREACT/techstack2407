@@ -1,54 +1,64 @@
 import React from 'react';
-import { Button, Space, Table, Tag, Tooltip } from 'antd';
+import { Button, notification, Space, Table, Tag, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { useDeleteExam, useGetExams } from '../../../apis/exams';
+import { useNavigate } from 'react-router-dom';
 
 const ManageExams = () => {
+	const [api, contextHolder] = notification.useNotification();
+
+	const navigate = useNavigate();
+
+	const { data } = useGetExams();
+	const { mutate: deleteExam } = useDeleteExam({
+		callbackSuccess: (data) => {
+			api.success({
+				message: 'Xóa đề thi thành công',
+				placement: 'topRight',
+			});
+		},
+		callbackError: (error) => {
+			api.error({
+				message: 'Xóa đề thi thất bại',
+				description: error,
+				placement: 'topRight',
+			});
+		},
+	});
+
+	const handleDeleteExam = (id) => {
+		deleteExam(id);
+	};
+
+	const handleUpdateExam = (id) => {
+		navigate(`./edit/${id}`);
+	};
+
 	const columns = [
 		{
 			title: 'Tên đề thi',
 			dataIndex: 'name',
 			key: 'name',
-			render: (text) => <a>{text}</a>,
 		},
 		{
 			title: 'Thời gian',
-			dataIndex: 'age',
-			key: 'age',
+			dataIndex: 'time',
+			key: 'time',
 		},
 		{
 			title: 'Môn thi',
-			dataIndex: 'address',
-			key: 'address',
+			dataIndex: 'subject',
+			key: 'subject',
 		},
 		{
 			title: 'Mức độ',
-			key: 'tags',
-			dataIndex: 'tags',
-			render: (_, { tags }) => (
-				<>
-					{tags.map((tag) => {
-						let color = tag.length > 5 ? 'geekblue' : 'green';
-						if (tag === 'loser') {
-							color = 'volcano';
-						}
-						return (
-							<Tag color={color} key={tag}>
-								{tag.toUpperCase()}
-							</Tag>
-						);
-					})}
-				</>
-			),
+			key: 'level',
+			dataIndex: 'level',
 		},
 		{
 			title: 'Số lượng câu hỏi',
 			key: 'action',
-			render: (_, record) => (
-				<Space size='middle'>
-					<a>Invite {record.name}</a>
-					<a>Delete</a>
-				</Space>
-			),
+			render: (_, { questions }) => <Tag color='green'>{questions.length}</Tag>,
 		},
 		{
 			title: 'Hành động',
@@ -56,27 +66,27 @@ const ManageExams = () => {
 			render: (_, record) => (
 				<Space size='middle'>
 					<Tooltip title='Chỉnh sửa'>
-						<Button shape='circle' icon={<EditOutlined />} />
+						<Button
+							onClick={() => handleUpdateExam(record.id)}
+							shape='circle'
+							icon={<EditOutlined />}
+						/>
 					</Tooltip>
 					<Tooltip title='Xóa'>
-						<Button shape='circle' icon={<DeleteOutlined />} />
+						<Button
+							onClick={() => handleDeleteExam(record.id)}
+							shape='circle'
+							icon={<DeleteOutlined />}
+						/>
 					</Tooltip>
 				</Space>
 			),
 		},
 	];
-	const data = [
-		{
-			key: '1',
-			name: 'John Brown',
-			age: 32,
-			address: 'New York No. 1 Lake Park',
-			tags: ['nice', 'developer'],
-		}
-	];
 
 	return (
 		<div>
+			{contextHolder}
 			<div
 				style={{
 					display: 'flex',

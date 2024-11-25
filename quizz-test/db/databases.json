@@ -52,12 +52,12 @@
   ],
   "exams": [
     {
-      "id": "c83d",
-      "name": "Đề thi HTML",
+      "name": "Đề thi HTML đã chỉnh sửa",
       "time": 45,
       "subject": "html",
       "level": 2,
       "highestScore": 0,
+      "id": "c83d",
       "questions": [
         {
           "question": "Câu hỏi 1",
@@ -76,46 +76,6 @@
             "B2",
             "C2",
             "D2"
-          ],
-          "answerCorrect": -1
-        }
-      ]
-    },
-    {
-      "id": "14fd",
-      "name": "Đề thi ReactJS",
-      "time": 20,
-      "subject": "reactjs",
-      "level": 3,
-      "highestScore": 0,
-      "questions": [
-        {
-          "question": "Câu hỏi 1",
-          "answers": [
-            "A1",
-            "B1",
-            "C1",
-            "D1"
-          ],
-          "answerCorrect": 1
-        }
-      ]
-    },
-    {
-      "id": "084a",
-      "name": "Đề thi javascript",
-      "time": 23,
-      "subject": "javascript",
-      "level": 3,
-      "highestScore": 0,
-      "questions": [
-        {
-          "question": "Câu hỏi 1",
-          "answers": [
-            "A1",
-            "B1",
-            "C1",
-            "D1"
           ],
           "answerCorrect": -1
         }

@@ -52,6 +52,7 @@ const App = () => {
 					<Route path='' element={<Dashboard />} />
 					<Route path='exams' element={<ManageExams />} />
 					<Route path='exams/create' element={<CreateExam />} />
+					<Route path='exams/edit/:id' element={<CreateExam />} />
 					<Route path='users' element={<ManageUsers />} />
 					<Route path='feedback' element={<ManageFeedback />} />
 				</Route>

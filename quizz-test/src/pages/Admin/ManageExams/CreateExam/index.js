@@ -11,13 +11,32 @@ import {
 	Select,
 	Space,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles.css';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useCreateExam } from '../../../../apis/exams';
+import {
+	useCreateExam,
+	useGetExam,
+	useUpdateExam,
+} from '../../../../apis/exams';
+import { useParams } from 'react-router-dom';
 
 const CreateExam = () => {
+	const params = useParams();
+	const idExam = params.id;
+
+	const [api, contextHolder] = notification.useNotification();
+
+	const [statePage, setStatePage] = useState('create');
+	const [questions, setQuestions] = useState([
+		{
+			question: '',
+			answers: ['', '', '', ''],
+			answerCorrect: -1,
+		},
+	]);
+
 	const validationSchema = Yup.object({
 		name: Yup.string().required('Tên đề thi không được bỏ trống'),
 		time: Yup.number()
@@ -41,19 +60,15 @@ const CreateExam = () => {
 		onSubmit: (data) => {
 			const newExam = { ...data, questions };
 
-			createExam(newExam);
+			if (statePage === 'create') {
+				createExam(newExam);
+			} else {
+				updateExam(newExam);
+			}
 		},
 	});
 
-	const [api, contextHolder] = notification.useNotification();
-
-	const [questions, setQuestions] = useState([
-		{
-			question: '',
-			answers: ['', '', '', ''],
-			answerCorrect: -1,
-		},
-	]);
+	const { data } = useGetExam(idExam);
 
 	const { mutate: createExam, isPending } = useCreateExam({
 		callbackSuccess: (data) => {
@@ -74,6 +89,22 @@ const CreateExam = () => {
 		callbackError: (error) => {
 			api.error({
 				message: 'Tạo đề thi thất bại',
+				description: error,
+				placement: 'topRight',
+			});
+		},
+	});
+
+	const { mutate: updateExam } = useUpdateExam({
+		callbackSuccess: (data) => {
+			api.success({
+				message: 'Sửa đề thi thành công',
+				placement: 'topRight',
+			});
+		},
+		callbackError: (error) => {
+			api.error({
+				message: 'Sửa đề thi thất bại',
 				description: error,
 				placement: 'topRight',
 			});
@@ -102,6 +133,33 @@ const CreateExam = () => {
 		setQuestions(newQuestions);
 	};
 
+	useEffect(() => {
+		if (idExam) {
+			setStatePage('edit');
+		}
+	}, [idExam]);
+
+	useEffect(() => {
+		if (data?.questions.length > 0) {
+			setQuestions(data.questions);
+		}
+		if (data?.name) {
+			formik.setFieldValue('name', data.name);
+		}
+		if (data?.time) {
+			formik.setFieldValue('time', data.time);
+		}
+		if (data?.subject) {
+			formik.setFieldValue('subject', data.subject);
+		}
+		if (data?.level) {
+			formik.setFieldValue('level', data.level);
+		}
+		if (data?.level) {
+			formik.setFieldValue('id', data.id);
+		}
+	}, [data]);
+
 	return (
 		<div className='create-exam'>
 			{contextHolder}
@@ -111,7 +169,7 @@ const CreateExam = () => {
 					justifyContent: 'space-between',
 				}}
 			>
-				<h1>Tạo đề thi</h1>
+				<h1>{statePage === 'create' ? 'Tạo' : 'Sửa'} đề thi</h1>
 			</div>
 
 			<Form name='basic' layout='vertical'>
@@ -363,7 +421,7 @@ const CreateExam = () => {
 						onClick={formik.handleSubmit}
 						loading={isPending}
 					>
-						Tạo đề thi
+						{statePage === 'create' ? 'Tạo' : 'Cập nhật'} đề thi
 					</Button>
 				</div>
 			</Form>
