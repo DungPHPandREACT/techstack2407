@@ -16,11 +16,17 @@ const DefaultLayoutAdmin = (props) => {
 		token: { colorBgContainer, borderRadiusLG },
 	} = theme.useToken();
 
+	const navigate = useNavigate();
+
+	const handleRedirectPage = (url) => {
+		navigate(url);
+	};
+
 	const listNav = [
 		{
 			key: '',
 			icon: <DashboardOutlined />,
-			label: 'Trang chủ',
+			label: <div onClick={() => handleRedirectPage('/admin')}>Trang chủ</div>,
 		},
 		{
 			key: 'mange-exams',
@@ -29,11 +35,19 @@ const DefaultLayoutAdmin = (props) => {
 			children: [
 				{
 					key: 'exams',
-					label: 'Danh sách đề thi',
+					label: (
+						<div onClick={() => handleRedirectPage('/admin/exams')}>
+							Danh sách đề thi
+						</div>
+					),
 				},
 				{
 					key: 'exams/create',
-					label: 'Tạo đề thi',
+					label: (
+						<div onClick={() => handleRedirectPage('/admin/exams/create')}>
+							Tạo đề thi
+						</div>
+					),
 				},
 			],
 		},

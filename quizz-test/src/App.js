@@ -27,6 +27,7 @@ const App = () => {
 	});
 
 	const handleChangeUserCurrent = (user) => {
+		localStorage.removeItem('user');
 		setUserCurrent(user);
 	};
 

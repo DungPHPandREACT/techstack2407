@@ -5,17 +5,106 @@ import {
 	Divider,
 	Form,
 	Input,
+	notification,
 	Radio,
 	Row,
 	Select,
 	Space,
 } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import './styles.css';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useCreateExam } from '../../../../apis/exams';
 
 const CreateExam = () => {
+	const validationSchema = Yup.object({
+		name: Yup.string().required('Tên đề thi không được bỏ trống'),
+		time: Yup.number()
+			.required('Thời gian làm bài là bắt buộc')
+			.min(1, 'Thời gian phải lớn hơn 0'),
+		subject: Yup.string().required('Môn học không được bỏ trống'),
+		level: Yup.number()
+			.required('Cấp độ là bắt buộc')
+			.oneOf([1, 2, 3], 'Cấp độ phải là Cơ bản hoặc Trung bình hoặc Nâng cao'),
+	});
+
+	const formik = useFormik({
+		initialValues: {
+			name: '',
+			time: 0,
+			subject: '',
+			level: 1,
+			highestScore: 0,
+		},
+		// validationSchema,
+		onSubmit: (data) => {
+			const newExam = { ...data, questions };
+
+			createExam(newExam);
+		},
+	});
+
+	const [api, contextHolder] = notification.useNotification();
+
+	const [questions, setQuestions] = useState([
+		{
+			question: '',
+			answers: ['', '', '', ''],
+			answerCorrect: -1,
+		},
+	]);
+
+	const { mutate: createExam, isPending } = useCreateExam({
+		callbackSuccess: (data) => {
+			api.success({
+				message: 'Tạo đề thi thành công',
+				placement: 'topRight',
+			});
+			setQuestions([
+				{
+					question: '',
+					answers: ['', '', '', ''],
+					answerCorrect: -1,
+				},
+			]);
+
+			formik.handleReset();
+		},
+		callbackError: (error) => {
+			api.error({
+				message: 'Tạo đề thi thất bại',
+				description: error,
+				placement: 'topRight',
+			});
+		},
+	});
+
+	const handleAddQuestion = () => {
+		setQuestions([
+			...questions,
+			{
+				question: '',
+				answers: ['', '', '', ''],
+				answerCorrect: -1,
+			},
+		]);
+	};
+
+	const handleChangeContentQuestion = (value, index, key, indexAnswer = -1) => {
+		const newQuestions = [...questions];
+		if (indexAnswer !== -1) {
+			newQuestions[index][key][indexAnswer] = value;
+		} else {
+			newQuestions[index][key] = value;
+		}
+
+		setQuestions(newQuestions);
+	};
+
 	return (
 		<div className='create-exam'>
+			{contextHolder}
 			<div
 				style={{
 					display: 'flex',
@@ -34,7 +123,12 @@ const CreateExam = () => {
 						<Row justify='space-between'>
 							<Col span={12} style={{ padding: '0px 12px' }}>
 								<Form.Item label='Tên đề thi'>
-									<Input size='large' />
+									<Input
+										size='large'
+										name='name'
+										value={formik.values.name}
+										onChange={formik.handleChange}
+									/>
 								</Form.Item>
 							</Col>
 							<Col span={12} style={{ padding: '0px 12px' }}>
@@ -44,6 +138,9 @@ const CreateExam = () => {
 										suffix='phút'
 										type='number'
 										size='large'
+										name='time'
+										value={formik.values.time}
+										onChange={formik.handleChange}
 									/>
 								</Form.Item>
 							</Col>
@@ -51,6 +148,9 @@ const CreateExam = () => {
 								<Form.Item label='Môn thi'>
 									<Select
 										size='large'
+										name='subject'
+										value={formik.values.subject}
+										onChange={(value) => formik.setFieldValue('subject', value)}
 										options={[
 											{
 												value: 'html',
@@ -80,17 +180,20 @@ const CreateExam = () => {
 								<Form.Item label='Mức độ'>
 									<Select
 										size='large'
+										name='level'
+										value={formik.values.level}
+										onChange={(value) => formik.setFieldValue('level', value)}
 										options={[
 											{
-												value: 'basic',
+												value: 1,
 												label: 'Cơ bản',
 											},
 											{
-												value: 'medium',
+												value: 2,
 												label: 'Trung bình',
 											},
 											{
-												value: 'advanced',
+												value: 3,
 												label: 'Nâng cao',
 											},
 										]}
@@ -103,81 +206,144 @@ const CreateExam = () => {
 						<div>
 							<Divider orientation='left'>Số lượng câu hỏi</Divider>
 						</div>
-						<Row justify='space-between'>
-							<Col span={24} style={{ padding: '0px 12px' }}>
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'column',
-										marginTop: '0px',
-									}}
-								>
-									<Form.Item label='Câu hỏi 1'>
-										<Input.TextArea />
-									</Form.Item>
-									<Radio.Group>
-										<Space direction='vertical' style={{ width: '100%' }}>
-											<Radio value='A'>
-												<div
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-													}}
-												>
-													<div style={{ marginRight: '8px', width: '78px' }}>
-														Đáp án A
+						{questions?.map((question, index) => (
+							<Row justify='space-between'>
+								<Col span={24} style={{ padding: '0px 12px' }}>
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'column',
+											marginTop: '0px',
+										}}
+									>
+										<Form.Item label={`Câu hỏi ${index + 1}`}>
+											<Input.TextArea
+												value={question?.question}
+												onChange={(event) =>
+													handleChangeContentQuestion(
+														event.target.value,
+														index,
+														'question'
+													)
+												}
+											/>
+										</Form.Item>
+										<Radio.Group
+											value={Number(question?.answerCorrect)}
+											onChange={(event) => {
+												handleChangeContentQuestion(
+													event.target.value,
+													index,
+													'answerCorrect'
+												);
+											}}
+										>
+											<Space direction='vertical' style={{ width: '100%' }}>
+												<Radio value={0}>
+													<div
+														style={{
+															display: 'flex',
+															alignItems: 'center',
+														}}
+													>
+														<div style={{ marginRight: '8px', width: '78px' }}>
+															Đáp án A
+														</div>
+														<Input
+															value={question?.answers[0]}
+															onChange={(event) =>
+																handleChangeContentQuestion(
+																	event.target.value,
+																	index,
+																	'answers',
+																	0
+																)
+															}
+														/>
 													</div>
-													<Input />
-												</div>
-											</Radio>
-											<Radio value='B'>
-												<div
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-													}}
-												>
-													<div style={{ marginRight: '8px', width: '78px' }}>
-														Đáp án B
+												</Radio>
+												<Radio value={1}>
+													<div
+														style={{
+															display: 'flex',
+															alignItems: 'center',
+														}}
+													>
+														<div style={{ marginRight: '8px', width: '78px' }}>
+															Đáp án B
+														</div>
+														<Input
+															value={question?.answers[1]}
+															onChange={(event) =>
+																handleChangeContentQuestion(
+																	event.target.value,
+																	index,
+																	'answers',
+																	1
+																)
+															}
+														/>
 													</div>
-													<Input />
-												</div>
-											</Radio>
-											<Radio value='C'>
-												<div
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-													}}
-												>
-													<div style={{ marginRight: '8px', width: '78px' }}>
-														Đáp án C
+												</Radio>
+												<Radio value={2}>
+													<div
+														style={{
+															display: 'flex',
+															alignItems: 'center',
+														}}
+													>
+														<div style={{ marginRight: '8px', width: '78px' }}>
+															Đáp án C
+														</div>
+														<Input
+															value={question?.answers[2]}
+															onChange={(event) =>
+																handleChangeContentQuestion(
+																	event.target.value,
+																	index,
+																	'answers',
+																	2
+																)
+															}
+														/>
 													</div>
-													<Input />
-												</div>
-											</Radio>
-											<Radio value='D'>
-												<div
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-													}}
-												>
-													<div style={{ marginRight: '8px', width: '78px' }}>
-														Đáp án D
+												</Radio>
+												<Radio value={3}>
+													<div
+														style={{
+															display: 'flex',
+															alignItems: 'center',
+														}}
+													>
+														<div style={{ marginRight: '8px', width: '78px' }}>
+															Đáp án D
+														</div>
+														<Input
+															value={question?.answers[3]}
+															onChange={(event) =>
+																handleChangeContentQuestion(
+																	event.target.value,
+																	index,
+																	'answers',
+																	3
+																)
+															}
+														/>
 													</div>
-													<Input />
-												</div>
-											</Radio>
-										</Space>
-									</Radio.Group>
-								</div>
-
-								<Button fullWidth style={{ marginTop: '12px' }}>
-									Thêm mới câu hỏi
-								</Button>
-							</Col>
-						</Row>
+												</Radio>
+											</Space>
+										</Radio.Group>
+									</div>
+								</Col>
+							</Row>
+						))}
+						<Button
+							onClick={handleAddQuestion}
+							fullWidth
+							style={{ marginTop: '12px' }}
+						>
+							Thêm mới câu hỏi
+						</Button>
 					</Col>
 				</Row>
 
@@ -191,7 +357,12 @@ const CreateExam = () => {
 					<Button danger style={{ marginLeft: '12px' }}>
 						Đóng lại
 					</Button>
-					<Button type='primary' style={{ marginRight: '12px' }}>
+					<Button
+						type='primary'
+						style={{ marginRight: '12px' }}
+						onClick={formik.handleSubmit}
+						loading={isPending}
+					>
 						Tạo đề thi
 					</Button>
 				</div>
